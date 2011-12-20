@@ -1,0 +1,51 @@
+<!--
+   nicechart.inx
+   
+   Copyright 2011 
+   
+   Christoph Sterz 
+   Florian Weber 
+   
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
+   
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+   MA 02110-1301, USA.
+   
+   
+-->
+
+<inkscape-extension>
+	<_name>NiceCharts</_name>
+	<id>org.ekips.filter.hello_world</id>
+	<dependency type="executable" location="extensions">nicechart.py</dependency>
+	<dependency type="executable" location="extensions">inkex.py</dependency>
+	<param name="desc" type="description">Type in comma seperated values!</param>
+	<param name="desc" type="description">(like apples:3,bananas:5)</param>
+	<param name="what" type="string">apples:3,bananas:5</param>
+	<param name="type" type="enum" _gui-text="Chart Type:">
+		<item value="bar">Bar Chart</item>
+		<item value="pie">Pie Chart</item>
+		<item value="stbar"> Stacked Bar Chart</item>
+	</param>
+	<param type="boolean" name="blur" _gui-text="Draw Blur:" >false</param>
+	<effect>
+		<object-type>all</object-type>
+		<effects-menu>
+			 <submenu _name="Render"/>
+		</effects-menu>
+	</effect>
+	<script>
+		<command reldir="extensions" interpreter="python">nicechart.py</command>
+	</script>
+</inkscape-extension>
+
