@@ -38,6 +38,7 @@ import inkex
 from simplestyle import *
 import math, re
 
+csv_file_name=""
 
 class NiceChart(inkex.Effect):
 	"""
@@ -62,10 +63,15 @@ class NiceChart(inkex.Effect):
 			  type="string", dest="type", default='',
 			  help="Chart Type")
 			  
-		# Define string option "--blur" with "-b" shortcut.	   
+		# Define bool option "--blur" with "-b" shortcut.	   
 	 	self.OptionParser.add_option("-b", "--blur", action="store",
 			  type="inkbool", dest="blur", default='True',
 			  help="Blur Type")
+			  
+		# Define string option "--file" with "-f" shortcut.	   
+	 	self.OptionParser.add_option("-f", "--filename", action="store",
+			  type="string", dest="filename", default='',
+			  help="Chart Type")
 	
 	
 	
@@ -79,12 +85,22 @@ class NiceChart(inkex.Effect):
 		keys=[]
 		values=[]
 		keys_present=True
-		what=re.findall("([A-Z|a-z|0-9]+:[0-9]+)",what)
-		for value in what:
-			value=value.split(":")
-			keys.append(value[0])
-			values.append(value[1])
 		
+		csv_file_name=self.options.filename
+		
+		if(csv_file_name!=""):
+			csv_file=open(csv_file_name,"r")
+			for line in csv_file:
+				value=line.split(";")
+				keys.append(value[0])
+				values.append(value[1])
+			csv_file.close()
+		else:
+			what=re.findall("([A-Z|a-z|0-9]+:[0-9]+)",what)
+			for value in what:
+				value=value.split(":")
+				keys.append(value[0])
+				values.append(value[1])
 		
 		# Get script's "--type" option value.
 		charttype=self.options.type

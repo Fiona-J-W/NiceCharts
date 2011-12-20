@@ -30,8 +30,11 @@
 	<dependency type="executable" location="extensions">nicechart.py</dependency>
 	<dependency type="executable" location="extensions">inkex.py</dependency>
 	<param name="desc" type="description">Type in comma seperated values!</param>
-	<param name="desc" type="description">(like apples:3,bananas:5)</param>
-	<param name="what" type="string">apples:3,bananas:5</param>
+	<param name="desc" type="description" >(like apples:3,bananas:5)</param>
+	<param name="what" type="string" _gui-text="Data:"></param>
+	<param name="desc" type="description">OR:</param>
+	<param name="desc" type="description">Enter the name of a CSV-file:</param>
+	<param name="filename" type="string" _gui-text="File:" ></param>
 	<param name="type" type="enum" _gui-text="Chart Type:">
 		<item value="bar">Bar Chart</item>
 		<item value="pie">Pie Chart</item>
