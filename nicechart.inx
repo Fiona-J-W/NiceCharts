@@ -46,8 +46,8 @@
 				</page>
 			</param>
 		</page>
-		<page name="description_settings" _gui-text="Description">
-			
+		<page name="description_settings" _gui-text="Labels">
+			<param type="string" name="font" _gui-text="Font:">sans-serif</param>
 		</page>
 		<page name="chart_settings" _gui-text="Charts">
 			<param name="bar-height" type="int" _gui-text="bar-height:" min="0" max="100000" >100</param>
@@ -62,7 +62,7 @@
 	<param name="type" type="enum" _gui-text="Chart Type:">
 		<item value="bar">Bar Chart</item>
 		<item value="pie">Pie Chart</item>
-		<item value="stbar"> Stacked Bar Chart</item>
+		<item value="stbar">Stacked Bar Chart</item>
 	</param>
 	<effect>
 		<object-type>all</object-type>

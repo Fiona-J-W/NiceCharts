@@ -58,32 +58,32 @@ class NiceChart(inkex.Effect):
 			  type = 'string', dest = 'what', default = '22,11,67',
 			  help = 'Chart Values')
 	 	
-		# Define string option "--type" with "-t" shortcut.	   
+		# Define string option "--type" with "-t" shortcut.
 	 	self.OptionParser.add_option("-t", "--type", action="store",
 			  type="string", dest="type", default='',
 			  help="Chart Type")
 		
-		# Define bool option "--blur" with "-b" shortcut.	   
+		# Define bool option "--blur" with "-b" shortcut.
 	 	self.OptionParser.add_option("-b", "--blur", action="store",
 			  type="inkbool", dest="blur", default='True',
 			  help="Blur Type")
 		
-		# Define string option "--file" with "-f" shortcut.	   
+		# Define string option "--file" with "-f" shortcut.
 	 	self.OptionParser.add_option("-f", "--filename", action="store",
 			  type="string", dest="filename", default='',
 			  help="Name of File")
 		
-		# Define string option "--input_type" with "-i" shortcut.	   
+		# Define string option "--input_type" with "-i" shortcut.
 	 	self.OptionParser.add_option("-i", "--input_type", action="store",
 			  type="string", dest="input_type", default='file',
 			  help="Chart Type")
 		
-		# Define string option "--delimiter" with "-d" shortcut.	   
+		# Define string option "--delimiter" with "-d" shortcut.
 	 	self.OptionParser.add_option("-d", "--delimiter", action="store",
 			  type="string", dest="csv_delimiter", default=';',
 			  help="delimiter")
 			  
-		# Define string option "--colors" with "-c" shortcut.	   
+		# Define string option "--colors" with "-c" shortcut.
 	 	self.OptionParser.add_option("-c", "--colors", action="store",
 			  type="string", dest="colors", default='default',
 			  help="color-scheme")
@@ -114,6 +114,10 @@ class NiceChart(inkex.Effect):
 	 	self.OptionParser.add_option("-o", "--stacked-bar-text-offset", action="store",
 			type="int", dest="stacked_bar_text_offset", default='10',
 			help="distance between stacked bar and descriptions")
+			
+	 	self.OptionParser.add_option("-F", "--font", action="store",
+			type="string", dest="font", default='sans-serif',
+			help="font of description")
 			
 		#Dummy:
 		self.OptionParser.add_option("","--input_sections")
@@ -184,6 +188,8 @@ class NiceChart(inkex.Effect):
 		bar_offset=self.options.bar_offset
 		#offset of the description in stacked-bar-charts:
 		stacked_bar_text_offset=self.options.stacked_bar_text_offset
+		
+		font=self.options.font
 		
 		if(charttype=="bar"):
 		#########
@@ -258,12 +264,12 @@ class NiceChart(inkex.Effect):
 					
 				
 				# If keys are given create text elements
-				if(keys_present):			
+				if(keys_present):
 					text = inkex.etree.Element(inkex.addNS('text','svg'))
 					text.set("transform","matrix(0,-1,1,0,0,0)")
 					text.set("x", "-"+str(height/2+2))
 					text.set("y", str(width/ 2 +offset+bar_width*0.75))
-					text.set("style","font-size:"+str(bar_width)+"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end")
+					text.set("style","font-size:"+str(bar_width)+"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end")
 					
 					text.text=keys[color]
 					
@@ -308,7 +314,7 @@ class NiceChart(inkex.Effect):
 			fe.set('stdDeviation', "1.1")
 			
 			# Add a grey background circle
-			background=inkex.etree.Element(inkex.addNS("circle","svg"))			
+			background=inkex.etree.Element(inkex.addNS("circle","svg"))
 			background.set("cx", str(width/2))
 			background.set("cy", str(height/2))
 			background.set("r", "50")
@@ -355,16 +361,16 @@ class NiceChart(inkex.Effect):
 				if(keys_present):
 					path=inkex.etree.Element(inkex.addNS("path","svg"))
 					path.set("d","m "+str((width/2)+50*math.cos(angle/2+offset))+","+str((height/2)+50*math.sin(angle/2+offset))+" "+str(8*math.cos(angle/2+offset))+","+str(8*math.sin(angle/2+offset)))
-					path.set("style","fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1")				
+					path.set("style","fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1")
 					layer.append(path)
 					text = inkex.etree.Element(inkex.addNS('text','svg'))
 					text.set("x", str((width/2)+60*math.cos(angle/2+offset)))
 					text.set("y", str((height/2)+60*math.sin(angle/2+offset)))
-					#check if it is right or left of the Pie					
+					#check if it is right or left of the Pie
 					if(math.cos(angle/2+offset)>0):
-						text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream Charter")
+						text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream Charter")
 					else:
-						text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end")
+						text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end")
 					text.text=keys[color]
 					layer.append(text)
 				
@@ -450,7 +456,7 @@ class NiceChart(inkex.Effect):
 					text = inkex.etree.Element(inkex.addNS('text','svg'))
 					text.set("x", str(width/2+bar_width+stacked_bar_text_offset+1))
 					text.set("y", str(height / 2 - offset + 2 - (normedvalue / 2)))
-					text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream Charter")
+					text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream Charter")
 					text.text=keys[color]
 					layer.append(text)
 				
