@@ -114,6 +114,9 @@ class NiceChart(inkex.Effect):
 		if(input_type=="\"file\""):
 			csv_file=open(csv_file_name,"r")
 			for line in csv_file:
+				if(line=""):
+					#ignore empty lines:
+					continue
 				value=line.split(csv_delimiter)
 				keys.append(value[col_key])
 				values.append(value[col_val])
