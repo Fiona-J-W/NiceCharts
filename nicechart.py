@@ -126,7 +126,7 @@ class NiceChart(inkex.Effect):
 			for value in what:
 				value=value.split(":")
 				keys.append(value[0])
-				values.append(int(value[1]))
+				values.append(float(value[1]))
 		else:
 			err_log=open("/home/florian/err.log","a")
 			err_log.write("Error: input_type="+input_type+"\n")
