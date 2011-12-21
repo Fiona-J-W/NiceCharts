@@ -114,12 +114,10 @@ class NiceChart(inkex.Effect):
 		if(input_type=="\"file\""):
 			csv_file=open(csv_file_name,"r")
 			for line in csv_file:
-				if(line==""):
-					#ignore empty lines:
-					continue
-				value=line.split(csv_delimiter)
-				keys.append(value[col_key])
-				values.append(value[col_val])
+				if(len(line)>1):
+					value=line.split(csv_delimiter)
+					keys.append(value[col_key])
+					values.append(value[col_val])
 			csv_file.close()
 		elif(input_type=="\"direct_input\""):
 			what=re.findall("([A-Z|a-z|0-9]+:[0-9]+)",what)
@@ -127,10 +125,6 @@ class NiceChart(inkex.Effect):
 				value=value.split(":")
 				keys.append(value[0])
 				values.append(value[1])
-		else:
-			err_log=open("/home/florian/err.log","a")
-			err_log.write("Error: input_type="+input_type+"\n")
-			err_log.close()
 		# Get script's "--type" option value.
 		charttype=self.options.type
 		
