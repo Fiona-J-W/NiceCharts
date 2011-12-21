@@ -59,7 +59,7 @@ class NiceChart(inkex.Effect):
 			  help = 'Chart Values')
 	 	
 		# Define string option "--type" with "-t" shortcut.
-	 	self.OptionParser.add_option("-t", "--type", action="store",
+		self.OptionParser.add_option("-t", "--type", action="store",
 			  type="string", dest="type", default='',
 			  help="Chart Type")
 		
@@ -98,6 +98,9 @@ class NiceChart(inkex.Effect):
 			  type="int", dest="col_val", default='1',
 			  help="column that contains the values")
 			  
+	 	self.OptionParser.add_option("-r", "--rotate", action="store",
+			  type="inkbool", dest="rotate", default='False',
+			  help="Draw barchart horizontally")
 			
 	 	self.OptionParser.add_option("-W", "--bar-width", action="store",
 			type="int", dest="bar_width", default='10',
@@ -190,12 +193,17 @@ class NiceChart(inkex.Effect):
 		#offset of the description in stacked-bar-charts:
 		stacked_bar_text_offset=self.options.stacked_bar_text_offset
 		
+		#get font
 		font=self.options.font
 		
+		#get rotation
+		rotate = self.options.rotate	
+
 		if(charttype=="bar"):
 		#########
 		###BAR###
 		#########
+			
 			#iterate all values, use offset to draw the bars in different places
 			offset=0
 			color=0
@@ -226,7 +234,7 @@ class NiceChart(inkex.Effect):
 			# Append Gaussian Blur to that Filter
 			fe = inkex.etree.SubElement(filt,inkex.addNS('feGaussianBlur','svg'))
 			fe.set('stdDeviation', "1.1")
-			
+			 
 			# Draw Single bars with their shadows
 			for value in values:
 				
@@ -234,12 +242,20 @@ class NiceChart(inkex.Effect):
 				if(draw_blur):
 					# Create shadow element
 					shadow = inkex.etree.Element(inkex.addNS("rect","svg"))
-					# Set chart position to center of document.
-					shadow.set('x', str(width / 2 + offset +1))
-					shadow.set('y', str(height / 2 - int(value)+1))
+					# Set chart position to center of document. Make it horizontal or vertical
+					if(not rotate):
+						shadow.set('x', str(width / 2 + offset +1))
+						shadow.set('y', str(height / 2 - int(value)+1))
+					else:
+						shadow.set('y', str(width / 2 + offset +1))
+						shadow.set('x', str(height / 2 +1))
 					# Set shadow properties
-					shadow.set("width", str(bar_width))
-					shadow.set("height", str(int(value)*1))
+					if(not rotate):
+						shadow.set("width", str(bar_width))
+						shadow.set("height", str(int(value)*1))
+					else:
+						shadow.set("height", str(bar_width))
+						shadow.set("width", str(int(value)*1))
 					# Set shadow blur (connect to filter object in xml path)
 					shadow.set("style","filter:url(#filter)")
 				
@@ -248,12 +264,20 @@ class NiceChart(inkex.Effect):
 				rect = inkex.etree.Element(inkex.addNS('rect','svg'))
 				
 				# Set chart position to center of document.
-				rect.set('x', str(width / 2 + offset))
-				rect.set('y', str(height / 2 - int(value)))
-				
+				if(not rotate):
+					rect.set('x', str(width/2+offset))
+					rect.set('y', str(height/2-int(value)))
+				else:
+					rect.set('y', str(width/2+offset))
+					rect.set('x', str(height/2))
 				# Set rectangle properties
-				rect.set("width", str(bar_width))
-				rect.set("height", str(int(value)*1))
+				if(not rotate):
+					rect.set("width", str(bar_width))
+					rect.set("height", str(int(value)*1))
+				else:
+					rect.set("height", str(bar_width))
+					rect.set("width", str(int(value)*1))
+					
 				rect.set("style","fill:"+Colors[color%color_count])
 				
 				# Set shadow blur (connect to filter object in xml path)
@@ -261,16 +285,21 @@ class NiceChart(inkex.Effect):
 					shadow.set("style","filter:url(#filter)")
 				
 				
-					
-				
 				# If keys are given create text elements
 				if(keys_present):
 					text = inkex.etree.Element(inkex.addNS('text','svg'))
-					text.set("transform","matrix(0,-1,1,0,0,0)")
-					text.set("x", "-"+str(height/2+2))
-					text.set("y", str(width/ 2 +offset+bar_width*0.75))
-					text.set("style","font-size:"+str(bar_width)+"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end")
+					if(not rotate):
+						text.set("transform","matrix(0,-1,1,0,0,0)")
+						text.set("x", "-"+str(height/2+2))
+						text.set("y", str(width/2+offset+bar_width*0.75))
+					else:
+						text.set("y", str(width/2+offset+bar_width*0.75))
+						text.set("x", str(height/2-2))						
 					
+					text.set("style","font-size:"+str(bar_width)\
+					+"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"\
+					+font+";-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end")
+
 					text.text=keys[color]
 					
 
