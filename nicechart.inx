@@ -48,6 +48,7 @@
 		<item value="pie">Pie Chart</item>
 		<item value="stbar"> Stacked Bar Chart</item>
 	</param>
+	<param type="string" name="colors" _gui-text="color-scheme:">default</param>
 	<param type="boolean" name="blur" _gui-text="Draw Blur:" >false</param>
 	<effect>
 		<object-type>all</object-type>

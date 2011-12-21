@@ -36,7 +36,7 @@
 import inkex
 # The simplestyle module provides functions for style parsing.
 from simplestyle import *
-import math, re
+import math, re, nicechart_colors as nc_colors
 
 csv_file_name=""
 
@@ -82,16 +82,21 @@ class NiceChart(inkex.Effect):
 	 	self.OptionParser.add_option("-d", "--delimiter", action="store",
 			  type="string", dest="csv_delimiter", default=';',
 			  help="delimiter")
+			  
+		# Define string option "--colors" with "-c" shortcut.	   
+	 	self.OptionParser.add_option("-c", "--colors", action="store",
+			  type="string", dest="colors", default='default',
+			  help="color-scheme")
 		
 		# Define string option "--col_key with "-k" shortcut.	   
 	 	self.OptionParser.add_option("-k", "--col_key", action="store",
 			  type="int", dest="col_key", default='0',
-			  help="delimiter")
+			  help="column that contains the keys")
 		
 		# Define string option "--col_val" with "-v" shortcut.	   
 	 	self.OptionParser.add_option("-v", "--col_val", action="store",
 			  type="int", dest="col_val", default='1',
-			  help="delimiter")
+			  help="column that contains the values")
 	
 	
 	def effect(self):
@@ -144,6 +149,14 @@ class NiceChart(inkex.Effect):
 		draw_blur=self.options.blur
 		#draw_blur=False
 		
+		# Set Default Colors
+		Colors=self.options.colors
+		if(Colors[0].isalpha()):
+			Colors=nc_colors.get_color_scheme(Colors)
+		else:
+			Colors=re.findall("(#[0-9a-fA-F]{6})",Colors)
+		
+		color_count=len(Colors)
 		
 		if(charttype=="bar"):
 		#########
@@ -162,9 +175,6 @@ class NiceChart(inkex.Effect):
 				values[x]=(float(values[x])/value_max)*100
 			
 			
-			# Set Default Colors
-			Colors=["#fdd99b","#d9bb7a","#eec73e","#fb8b00","#f44800","#d40000","#980101","#460101"]
-			Colors.reverse()
 			
 			# Get defs of Document
 			defs = self.xpathSingle('/svg:svg//svg:defs')
@@ -215,7 +225,7 @@ class NiceChart(inkex.Effect):
 				#shadow.set("height", str(int(value)*1))
 				rect.set("width", "10")
 				rect.set("height", str(int(value)*1))
-				rect.set("style","fill:"+Colors[color])
+				rect.set("style","fill:"+Colors[color%color_count])
 				
 				# Set shadow blur (connect to filter object in xml path)
 				if(draw_blur):
@@ -256,8 +266,6 @@ class NiceChart(inkex.Effect):
 			color=0
 			
 			# Set Default Colors
-			Colors=["#fdd99b","#d9bb7a","#eec73e","#fb8b00","#f44800","#d40000","#980101","#460101"]
-			Colors.reverse()
 			
 			# Get defs of Document
 			defs = self.xpathSingle('/svg:svg//svg:defs')
@@ -318,7 +326,7 @@ class NiceChart(inkex.Effect):
 				pieslice.set(inkex.addNS('ry', 'sodipodi'), "50")
 				pieslice.set(inkex.addNS('start', 'sodipodi'), str(offset))
 				pieslice.set(inkex.addNS('end', 'sodipodi'), str(offset+angle))
-				pieslice.set("style","fill:"+Colors[color]+";stroke:none;fill-opacity:1")
+				pieslice.set("style","fill:"+Colors[color%color_count]+";stroke:none;fill-opacity:1")
 				
 				#If text is given, draw short paths and add the text
 				if(keys_present):
@@ -353,9 +361,6 @@ class NiceChart(inkex.Effect):
 			# Iterate all values to draw the different slices
 			color=0
 			
-			# Set Default Colors
-			Colors=["#fdd99b","#d9bb7a","#eec73e","#fb8b00","#f44800","#d40000","#980101","#460101"]
-			Colors.reverse()
 			
 			
 			# Get defs of Document
@@ -411,7 +416,7 @@ class NiceChart(inkex.Effect):
 				# Set rectangle properties
 				rect.set("width", "10")
 				rect.set("height", str((normedvalue)))
-				rect.set("style","fill:"+Colors[color])
+				rect.set("style","fill:"+Colors[color%color_count])
 				
 				#If text is given, draw short paths and add the text
 				if(keys_present):
