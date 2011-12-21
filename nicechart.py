@@ -36,7 +36,7 @@
 import inkex
 # The simplestyle module provides functions for style parsing.
 from simplestyle import *
-import math, re
+import math, re, nicechart_colors as nc_colors
 
 csv_file_name=""
 
@@ -58,40 +58,69 @@ class NiceChart(inkex.Effect):
 			  type = 'string', dest = 'what', default = '22,11,67',
 			  help = 'Chart Values')
 	 	
-		# Define string option "--type" with "-t" shortcut.	   
+		# Define string option "--type" with "-t" shortcut.
 	 	self.OptionParser.add_option("-t", "--type", action="store",
 			  type="string", dest="type", default='',
 			  help="Chart Type")
 		
-		# Define bool option "--blur" with "-b" shortcut.	   
+		# Define bool option "--blur" with "-b" shortcut.
 	 	self.OptionParser.add_option("-b", "--blur", action="store",
 			  type="inkbool", dest="blur", default='True',
 			  help="Blur Type")
 		
-		# Define string option "--file" with "-f" shortcut.	   
+		# Define string option "--file" with "-f" shortcut.
 	 	self.OptionParser.add_option("-f", "--filename", action="store",
 			  type="string", dest="filename", default='',
 			  help="Name of File")
 		
-		# Define string option "--input_type" with "-i" shortcut.	   
+		# Define string option "--input_type" with "-i" shortcut.
 	 	self.OptionParser.add_option("-i", "--input_type", action="store",
 			  type="string", dest="input_type", default='file',
 			  help="Chart Type")
 		
-		# Define string option "--delimiter" with "-d" shortcut.	   
+		# Define string option "--delimiter" with "-d" shortcut.
 	 	self.OptionParser.add_option("-d", "--delimiter", action="store",
 			  type="string", dest="csv_delimiter", default=';',
 			  help="delimiter")
+			  
+		# Define string option "--colors" with "-c" shortcut.
+	 	self.OptionParser.add_option("-c", "--colors", action="store",
+			  type="string", dest="colors", default='default',
+			  help="color-scheme")
 		
-		# Define string option "--col_key with "-k" shortcut.	   
+		
 	 	self.OptionParser.add_option("-k", "--col_key", action="store",
 			  type="int", dest="col_key", default='0',
-			  help="delimiter")
+			  help="column that contains the keys")
 		
-		# Define string option "--col_val" with "-v" shortcut.	   
+		
 	 	self.OptionParser.add_option("-v", "--col_val", action="store",
 			  type="int", dest="col_val", default='1',
-			  help="delimiter")
+			  help="column that contains the values")
+			  
+			
+	 	self.OptionParser.add_option("-W", "--bar-width", action="store",
+			type="int", dest="bar_width", default='10',
+			help="width of bars")
+			
+	 	self.OptionParser.add_option("-H", "--bar-height", action="store",
+			type="int", dest="bar_height", default='100',
+			help="height of bars")
+			
+	 	self.OptionParser.add_option("-O", "--bar-offset", action="store",
+			type="int", dest="bar_offset", default='5',
+			help="distance between bars")
+			
+	 	self.OptionParser.add_option("-o", "--stacked-bar-text-offset", action="store",
+			type="int", dest="stacked_bar_text_offset", default='10',
+			help="distance between stacked bar and descriptions")
+			
+	 	self.OptionParser.add_option("-F", "--font", action="store",
+			type="string", dest="font", default='sans-serif',
+			help="font of description")
+			
+		#Dummy:
+		self.OptionParser.add_option("","--input_sections")
 	
 	
 	def effect(self):
@@ -117,9 +146,9 @@ class NiceChart(inkex.Effect):
 				if(line==""):
 					#ignore empty lines:
 					continue
-				value=line.split(csv_delimiter)
-				keys.append(value[col_key])
-				values.append(float(value[col_val]))
+					value=line.split(csv_delimiter)
+					keys.append(value[col_key])
+					values.append(value[col_val])
 			csv_file.close()
 		elif(input_type=="\"direct_input\""):
 			what=re.findall("([A-Z|a-z|0-9]+:[0-9]+)",what)
@@ -131,6 +160,7 @@ class NiceChart(inkex.Effect):
 			err_log=open("/home/florian/err.log","a")
 			err_log.write("Error: input_type="+input_type+"\n")
 			err_log.close()
+
 		# Get script's "--type" option value.
 		charttype=self.options.type
 		
@@ -150,6 +180,23 @@ class NiceChart(inkex.Effect):
 		draw_blur=self.options.blur
 		#draw_blur=False
 		
+		# Set Default Colors
+		Colors=self.options.colors
+		if(Colors[0].isalpha()):
+			Colors=nc_colors.get_color_scheme(Colors)
+		else:
+			Colors=re.findall("(#[0-9a-fA-F]{6})",Colors)
+		
+		color_count=len(Colors)
+		
+		#Those values should be self-explaining:
+		bar_height=self.options.bar_height
+		bar_width=self.options.bar_width
+		bar_offset=self.options.bar_offset
+		#offset of the description in stacked-bar-charts:
+		stacked_bar_text_offset=self.options.stacked_bar_text_offset
+		
+		font=self.options.font
 		
 		if(charttype=="bar"):
 		#########
@@ -166,12 +213,7 @@ class NiceChart(inkex.Effect):
 				value_max=0.0
 
 			for x in range(len(values)):
-				values[x]=(values[x]/value_max)*100
-			
-			
-			# Set Default Colors
-			Colors=["#fdd99b","#d9bb7a","#eec73e","#fb8b00","#f44800","#d40000","#980101","#460101"]
-			Colors.reverse()
+				values[x]=(float(values[x])/value_max)*bar_height
 			
 			# Get defs of Document
 			defs = self.xpathSingle('/svg:svg//svg:defs')
@@ -202,7 +244,7 @@ class NiceChart(inkex.Effect):
 					shadow.set('x', str(width / 2 + offset +1))
 					shadow.set('y', str(height / 2 - int(value)+1))
 					# Set shadow properties
-					shadow.set("width", "10")
+					shadow.set("width", str(bar_width))
 					shadow.set("height", str(int(value)*1))
 					# Set shadow blur (connect to filter object in xml path)
 					shadow.set("style","filter:url(#filter)")
@@ -212,17 +254,13 @@ class NiceChart(inkex.Effect):
 				rect = inkex.etree.Element(inkex.addNS('rect','svg'))
 				
 				# Set chart position to center of document.
-				#shadow.set('x', str(width / 2 + offset +1))
-				#shadow.set('y', str(height / 2 - int(value)+1)) 
 				rect.set('x', str(width / 2 + offset))
 				rect.set('y', str(height / 2 - int(value)))
 				
 				# Set rectangle properties
-				#shadow.set("width", "10")
-				#shadow.set("height", str(int(value)*1))
-				rect.set("width", "10")
+				rect.set("width", str(bar_width))
 				rect.set("height", str(int(value)*1))
-				rect.set("style","fill:"+Colors[color])
+				rect.set("style","fill:"+Colors[color%color_count])
 				
 				# Set shadow blur (connect to filter object in xml path)
 				if(draw_blur):
@@ -232,18 +270,18 @@ class NiceChart(inkex.Effect):
 					
 				
 				# If keys are given create text elements
-				if(keys_present):			
+				if(keys_present):
 					text = inkex.etree.Element(inkex.addNS('text','svg'))
 					text.set("transform","matrix(0,-1,1,0,0,0)")
 					text.set("x", "-"+str(height/2+2))
-					text.set("y", str(width/ 2 +offset+7.5))
-					text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end")
+					text.set("y", str(width/ 2 +offset+bar_width*0.75))
+					text.set("style","font-size:"+str(bar_width)+"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end")
 					
 					text.text=keys[color]
 					
 
 				# Increase Offset and Color
-				offset=offset+15
+				offset=offset+bar_width+bar_offset
 				color=(color+1)%8
 				# Connect elements together.
 				if(draw_blur):
@@ -263,8 +301,6 @@ class NiceChart(inkex.Effect):
 			color=0
 			
 			# Set Default Colors
-			Colors=["#fdd99b","#d9bb7a","#eec73e","#fb8b00","#f44800","#d40000","#980101","#460101"]
-			Colors.reverse()
 			
 			# Get defs of Document
 			defs = self.xpathSingle('/svg:svg//svg:defs')
@@ -284,7 +320,7 @@ class NiceChart(inkex.Effect):
 			fe.set('stdDeviation', "1.1")
 			
 			# Add a grey background circle
-			background=inkex.etree.Element(inkex.addNS("circle","svg"))			
+			background=inkex.etree.Element(inkex.addNS("circle","svg"))
 			background.set("cx", str(width/2))
 			background.set("cy", str(height/2))
 			background.set("r", "50")
@@ -326,22 +362,22 @@ class NiceChart(inkex.Effect):
 				pieslice.set(inkex.addNS('ry', 'sodipodi'), "50")
 				pieslice.set(inkex.addNS('start', 'sodipodi'), str(offset))
 				pieslice.set(inkex.addNS('end', 'sodipodi'), str(offset+angle))
-				pieslice.set("style","fill:"+Colors[color]+";stroke:none;fill-opacity:1")
+				pieslice.set("style","fill:"+Colors[color%color_count]+";stroke:none;fill-opacity:1")
 				
 				#If text is given, draw short paths and add the text
 				if(keys_present):
 					path=inkex.etree.Element(inkex.addNS("path","svg"))
 					path.set("d","m "+str((width/2)+50*math.cos(angle/2+offset))+","+str((height/2)+50*math.sin(angle/2+offset))+" "+str(8*math.cos(angle/2+offset))+","+str(8*math.sin(angle/2+offset)))
-					path.set("style","fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1")				
+					path.set("style","fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1")
 					layer.append(path)
 					text = inkex.etree.Element(inkex.addNS('text','svg'))
 					text.set("x", str((width/2)+60*math.cos(angle/2+offset)))
 					text.set("y", str((height/2)+60*math.sin(angle/2+offset)))
-					#check if it is right or left of the Pie					
+					#check if it is right or left of the Pie
 					if(math.cos(angle/2+offset)>0):
-						text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream Charter")
+						text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream Charter")
 					else:
-						text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end")
+						text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end")
 					text.text=keys[color]
 					layer.append(text)
 				
@@ -361,9 +397,6 @@ class NiceChart(inkex.Effect):
 			# Iterate all values to draw the different slices
 			color=0
 			
-			# Set Default Colors
-			Colors=["#fdd99b","#d9bb7a","#eec73e","#fb8b00","#f44800","#d40000","#980101","#460101"]
-			Colors.reverse()
 			
 			
 			# Get defs of Document
@@ -388,6 +421,9 @@ class NiceChart(inkex.Effect):
 				valuesum=sum(values)
 			except ValueError:
 				valuesum=0.0
+
+			for value in values:
+				valuesum=valuesum+float(value)
 			
 			# Init offset
 			offset=0
@@ -396,7 +432,7 @@ class NiceChart(inkex.Effect):
 			for value in values:
 				
 				# Calculate the individual heights normalized on 100units
-				normedvalue=(100/valuesum)*int(value)
+				normedvalue=(bar_height/valuesum)*float(value)
 				
 				if(draw_blur):
 					# Create rectangle element
@@ -405,7 +441,7 @@ class NiceChart(inkex.Effect):
 					shadow.set('x', str(width / 2 + 1))
 					shadow.set('y', str(height / 2 - offset - (normedvalue)+1)) 
 					# Set rectangle properties
-					shadow.set("width", "10")
+					shadow.set("width",str(bar_width))
 					shadow.set("height", str((normedvalue)))
 					# Set shadow blur (connect to filter object in xml path)
 					shadow.set("style","filter:url(#filter)")
@@ -418,20 +454,20 @@ class NiceChart(inkex.Effect):
 				rect.set('y', str(height / 2 - offset - (normedvalue)))
 			   
 				# Set rectangle properties
-				rect.set("width", "10")
+				rect.set("width", str(bar_width))
 				rect.set("height", str((normedvalue)))
-				rect.set("style","fill:"+Colors[color])
+				rect.set("style","fill:"+Colors[color%color_count])
 				
 				#If text is given, draw short paths and add the text
 				if(keys_present):
 					path=inkex.etree.Element(inkex.addNS("path","svg"))
-					path.set("d","m "+str(width/2)+","+str(height / 2 - offset - (normedvalue / 2))+" 15,0")
-					path.set("style","fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1")				
+					path.set("d","m "+str((width+bar_width)/2)+","+str(height / 2 - offset - (normedvalue / 2))+" "+str(bar_width/2+stacked_bar_text_offset)+",0")
+					path.set("style","fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1")
 					layer.append(path)
 					text = inkex.etree.Element(inkex.addNS('text','svg'))
-					text.set("x", str(width/2+16))
+					text.set("x", str(width/2+bar_width+stacked_bar_text_offset+1))
 					text.set("y", str(height / 2 - offset + 2 - (normedvalue / 2)))
-					text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream Charter")
+					text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream Charter")
 					text.text=keys[color]
 					layer.append(text)
 				
