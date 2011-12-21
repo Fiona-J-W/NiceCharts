@@ -143,7 +143,9 @@ class NiceChart(inkex.Effect):
 		if(input_type=="\"file\""):
 			csv_file=open(csv_file_name,"r")
 			for line in csv_file:
-				if(len(line)>1):
+				if(line==""):
+					#ignore empty lines:
+					continue
 					value=line.split(csv_delimiter)
 					keys.append(value[col_key])
 					values.append(value[col_val])
@@ -153,7 +155,12 @@ class NiceChart(inkex.Effect):
 			for value in what:
 				value=value.split(":")
 				keys.append(value[0])
-				values.append(value[1])
+				values.append(float(value[1]))
+		else:
+			err_log=open("/home/florian/err.log","a")
+			err_log.write("Error: input_type="+input_type+"\n")
+			err_log.close()
+
 		# Get script's "--type" option value.
 		charttype=self.options.type
 		
@@ -200,14 +207,13 @@ class NiceChart(inkex.Effect):
 			color=0
 			
 			# Normalize the bars to the largest value
-			value_max=0
-			for value in values:
-				if(float(value)>value_max):
-					value_max=float(value)
+			try:
+				value_max=max(values)
+			except ValueError:
+				value_max=0.0
+
 			for x in range(len(values)):
 				values[x]=(float(values[x])/value_max)*bar_height
-			
-			
 			
 			# Get defs of Document
 			defs = self.xpathSingle('/svg:svg//svg:defs')
@@ -322,9 +328,10 @@ class NiceChart(inkex.Effect):
 			layer.append(background)
 			
 			#create value sum in order to divide the slices
-			valuesum=0
-			for value in values:
-				valuesum=valuesum+int(value)
+			try:
+				valuesum=sum(values)
+			except ValueError:
+				valuesum=0
 			
 			# Set an offsetangle
 			offset=0
@@ -410,7 +417,11 @@ class NiceChart(inkex.Effect):
 			fe.set('stdDeviation', "1.1")
 			
 			#create value sum in order to divide the bars
-			valuesum=0.0
+			try:
+				valuesum=sum(values)
+			except ValueError:
+				valuesum=0.0
+
 			for value in values:
 				valuesum=valuesum+float(value)
 			
