@@ -62,17 +62,36 @@ class NiceChart(inkex.Effect):
 	 	self.OptionParser.add_option("-t", "--type", action="store",
 			  type="string", dest="type", default='',
 			  help="Chart Type")
-			  
+		
 		# Define bool option "--blur" with "-b" shortcut.	   
 	 	self.OptionParser.add_option("-b", "--blur", action="store",
 			  type="inkbool", dest="blur", default='True',
 			  help="Blur Type")
-			  
+		
 		# Define string option "--file" with "-f" shortcut.	   
 	 	self.OptionParser.add_option("-f", "--filename", action="store",
 			  type="string", dest="filename", default='',
+			  help="Name of File")
+		
+		# Define string option "--input_type" with "-i" shortcut.	   
+	 	self.OptionParser.add_option("-i", "--input_type", action="store",
+			  type="string", dest="input_type", default='file',
 			  help="Chart Type")
-	
+		
+		# Define string option "--delimiter" with "-d" shortcut.	   
+	 	self.OptionParser.add_option("-d", "--delimiter", action="store",
+			  type="string", dest="csv_delimiter", default=';',
+			  help="delimiter")
+		
+		# Define string option "--col_key with "-k" shortcut.	   
+	 	self.OptionParser.add_option("-k", "--col_key", action="store",
+			  type="int", dest="col_key", default='0',
+			  help="delimiter")
+		
+		# Define string option "--col_val" with "-v" shortcut.	   
+	 	self.OptionParser.add_option("-v", "--col_val", action="store",
+			  type="int", dest="col_val", default='1',
+			  help="delimiter")
 	
 	
 	def effect(self):
@@ -87,21 +106,28 @@ class NiceChart(inkex.Effect):
 		keys_present=True
 		
 		csv_file_name=self.options.filename
+		csv_delimiter=self.options.csv_delimiter
+		input_type=self.options.input_type
+		col_key=self.options.col_key
+		col_val=self.options.col_val
 		
-		if(csv_file_name!=""):
+		if(input_type=="\"file\""):
 			csv_file=open(csv_file_name,"r")
 			for line in csv_file:
-				value=line.split(";")
-				keys.append(value[0])
-				values.append(value[1])
+				value=line.split(csv_delimiter)
+				keys.append(value[col_key])
+				values.append(value[col_val])
 			csv_file.close()
-		else:
+		elif(input_type=="\"direct_input\""):
 			what=re.findall("([A-Z|a-z|0-9]+:[0-9]+)",what)
 			for value in what:
 				value=value.split(":")
 				keys.append(value[0])
 				values.append(value[1])
-		
+		else:
+			err_log=open("/home/florian/err.log","a")
+			err_log.write("Error: input_type="+input_type+"\n")
+			err_log.close()
 		# Get script's "--type" option value.
 		charttype=self.options.type
 		

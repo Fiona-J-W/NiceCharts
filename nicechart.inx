@@ -29,12 +29,20 @@
 	<id>org.ekips.filter.hello_world</id>
 	<dependency type="executable" location="extensions">nicechart.py</dependency>
 	<dependency type="executable" location="extensions">inkex.py</dependency>
-	<param name="desc" type="description">Type in comma seperated values!</param>
-	<param name="desc" type="description" >(like apples:3,bananas:5)</param>
-	<param name="what" type="string" _gui-text="Data:"></param>
-	<param name="desc" type="description">OR:</param>
-	<param name="desc" type="description">Enter the name of a CSV-file:</param>
-	<param name="filename" type="string" _gui-text="File:" ></param>
+	<param name="input_type" type="notebook">
+		<page name="file" _gui-text="data from file">
+			<param name="desc" type="description">Enter the name of a CSV-file:</param>
+			<param name="filename" type="string" _gui-text="File:" ></param>
+			<param name="delimiter" type="string" _gui-text="Delimiter:" >;</param>
+			<param name="col_key" type="int" _gui-text="Coloumn that contians the keys:">0</param>
+			<param name="col_val" type="int" _gui-text="Coloumn that contians the values:">1</param>
+		</page>
+		<page name="direct_input" _gui-text="direct input">
+			<param name="desc" type="description">Type in comma seperated values:</param>
+			<param name="desc" type="description" >(like apples:3,bananas:5)</param>
+			<param name="what" type="string" _gui-text="Data:"></param>
+		</page>
+	</param>
 	<param name="type" type="enum" _gui-text="Chart Type:">
 		<item value="bar">Bar Chart</item>
 		<item value="pie">Pie Chart</item>
