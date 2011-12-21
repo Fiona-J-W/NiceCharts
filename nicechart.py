@@ -88,15 +88,35 @@ class NiceChart(inkex.Effect):
 			  type="string", dest="colors", default='default',
 			  help="color-scheme")
 		
-		# Define string option "--col_key with "-k" shortcut.	   
+		
 	 	self.OptionParser.add_option("-k", "--col_key", action="store",
 			  type="int", dest="col_key", default='0',
 			  help="column that contains the keys")
 		
-		# Define string option "--col_val" with "-v" shortcut.	   
+		
 	 	self.OptionParser.add_option("-v", "--col_val", action="store",
 			  type="int", dest="col_val", default='1',
 			  help="column that contains the values")
+			  
+			
+	 	self.OptionParser.add_option("-W", "--bar-width", action="store",
+			type="int", dest="bar_width", default='10',
+			help="width of bars")
+			
+	 	self.OptionParser.add_option("-H", "--bar-height", action="store",
+			type="int", dest="bar_height", default='100',
+			help="height of bars")
+			
+	 	self.OptionParser.add_option("-O", "--bar-offset", action="store",
+			type="int", dest="bar_offset", default='5',
+			help="distance between bars")
+			
+	 	self.OptionParser.add_option("-o", "--stacked-bar-text-offset", action="store",
+			type="int", dest="stacked_bar_text_offset", default='10',
+			help="distance between stacked bar and descriptions")
+			
+		#Dummy:
+		self.OptionParser.add_option("","--input_sections")
 	
 	
 	def effect(self):
@@ -159,11 +179,11 @@ class NiceChart(inkex.Effect):
 		color_count=len(Colors)
 		
 		#Those values should be self-explaining:
-		bar_height=250
-		bar_width=50
-		bar_offset=30
+		bar_height=self.options.bar_height
+		bar_width=self.options.bar_width
+		bar_offset=self.options.bar_offset
 		#offset of the description in stacked-bar-charts:
-		stacked_bar_text_offset=20
+		stacked_bar_text_offset=self.options.stacked_bar_text_offset
 		
 		if(charttype=="bar"):
 		#########

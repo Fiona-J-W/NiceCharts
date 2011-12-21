@@ -29,18 +29,34 @@
 	<id>org.ekips.filter.hello_world</id>
 	<dependency type="executable" location="extensions">nicechart.py</dependency>
 	<dependency type="executable" location="extensions">inkex.py</dependency>
-	<param name="input_type" type="notebook">
-		<page name="file" _gui-text="data from file">
-			<param name="desc" type="description">Enter the name of a CSV-file:</param>
-			<param name="filename" type="string" _gui-text="File:" ></param>
-			<param name="delimiter" type="string" _gui-text="Delimiter:" >;</param>
-			<param name="col_key" type="int" _gui-text="Coloumn that contians the keys:">0</param>
-			<param name="col_val" type="int" _gui-text="Coloumn that contians the values:">1</param>
+	<param name="input_sections" type="notebook">
+		<page name="data_settings" _gui-text="Data">
+			<param name="input_type" type="notebook">
+				<page name="file" _gui-text="data from file">
+					<param name="desc" type="description">Enter the name of a CSV-file:</param>
+					<param name="filename" type="string" _gui-text="File:" ></param>
+					<param name="delimiter" type="string" _gui-text="Delimiter:" >;</param>
+					<param name="col_key" type="int" _gui-text="Coloumn that contians the keys:" min="0" max="10000" >0</param>
+					<param name="col_val" type="int" _gui-text="Coloumn that contians the values:" min="0" max="10000" >1</param>
+				</page>
+				<page name="direct_input" _gui-text="direct input">
+					<param name="desc" type="description">Type in comma seperated values:</param>
+					<param name="desc" type="description" >(like apples:3,bananas:5)</param>
+					<param name="what" type="string" _gui-text="Data:"></param>
+				</page>
+			</param>
 		</page>
-		<page name="direct_input" _gui-text="direct input">
-			<param name="desc" type="description">Type in comma seperated values:</param>
-			<param name="desc" type="description" >(like apples:3,bananas:5)</param>
-			<param name="what" type="string" _gui-text="Data:"></param>
+		<page name="description_settings" _gui-text="Description">
+			
+		</page>
+		<page name="chart_settings" _gui-text="Charts">
+			<param name="bar-height" type="int" _gui-text="bar-height:" min="0" max="100000" >100</param>
+			<param name="bar-width" type="int" _gui-text="bar-width:" min="0" max="100000" >10</param>
+			<param name="bar-offset" type="int" _gui-text="bar-offset:" min="0" max="100000" >5</param>
+			<param name="stacked-bar-text-offset" type="int" _gui-text="offset between stacked bar and description:" min="0" max="100000" >10</param>
+			
+			<param type="string" name="colors" _gui-text="color-scheme:">default</param>
+			<param type="boolean" name="blur" _gui-text="Draw Blur:" >false</param>
 		</page>
 	</param>
 	<param name="type" type="enum" _gui-text="Chart Type:">
@@ -48,8 +64,6 @@
 		<item value="pie">Pie Chart</item>
 		<item value="stbar"> Stacked Bar Chart</item>
 	</param>
-	<param type="string" name="colors" _gui-text="color-scheme:">default</param>
-	<param type="boolean" name="blur" _gui-text="Draw Blur:" >false</param>
 	<effect>
 		<object-type>all</object-type>
 		<effects-menu>
