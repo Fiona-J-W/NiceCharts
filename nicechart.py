@@ -158,6 +158,13 @@ class NiceChart(inkex.Effect):
 		
 		color_count=len(Colors)
 		
+		#Those values should be self-explaining:
+		bar_height=250
+		bar_width=50
+		bar_offset=30
+		#offset of the description in stacked-bar-charts:
+		stacked_bar_text_offset=20
+		
 		if(charttype=="bar"):
 		#########
 		###BAR###
@@ -172,7 +179,7 @@ class NiceChart(inkex.Effect):
 				if(float(value)>value_max):
 					value_max=float(value)
 			for x in range(len(values)):
-				values[x]=(float(values[x])/value_max)*100
+				values[x]=(float(values[x])/value_max)*bar_height
 			
 			
 			
@@ -205,7 +212,7 @@ class NiceChart(inkex.Effect):
 					shadow.set('x', str(width / 2 + offset +1))
 					shadow.set('y', str(height / 2 - int(value)+1))
 					# Set shadow properties
-					shadow.set("width", "10")
+					shadow.set("width", str(bar_width))
 					shadow.set("height", str(int(value)*1))
 					# Set shadow blur (connect to filter object in xml path)
 					shadow.set("style","filter:url(#filter)")
@@ -215,15 +222,11 @@ class NiceChart(inkex.Effect):
 				rect = inkex.etree.Element(inkex.addNS('rect','svg'))
 				
 				# Set chart position to center of document.
-				#shadow.set('x', str(width / 2 + offset +1))
-				#shadow.set('y', str(height / 2 - int(value)+1)) 
 				rect.set('x', str(width / 2 + offset))
 				rect.set('y', str(height / 2 - int(value)))
 				
 				# Set rectangle properties
-				#shadow.set("width", "10")
-				#shadow.set("height", str(int(value)*1))
-				rect.set("width", "10")
+				rect.set("width", str(bar_width))
 				rect.set("height", str(int(value)*1))
 				rect.set("style","fill:"+Colors[color%color_count])
 				
@@ -239,14 +242,14 @@ class NiceChart(inkex.Effect):
 					text = inkex.etree.Element(inkex.addNS('text','svg'))
 					text.set("transform","matrix(0,-1,1,0,0,0)")
 					text.set("x", "-"+str(height/2+2))
-					text.set("y", str(width/ 2 +offset+7.5))
-					text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end")
+					text.set("y", str(width/ 2 +offset+bar_width*0.75))
+					text.set("style","font-size:"+str(bar_width)+"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end")
 					
 					text.text=keys[color]
 					
 
 				# Increase Offset and Color
-				offset=offset+15
+				offset=offset+bar_width+bar_offset
 				color=(color+1)%8
 				# Connect elements together.
 				if(draw_blur):
@@ -383,7 +386,7 @@ class NiceChart(inkex.Effect):
 			#create value sum in order to divide the bars
 			valuesum=0.0
 			for value in values:
-				valuesum=valuesum+int(value)
+				valuesum=valuesum+float(value)
 			
 			# Init offset
 			offset=0
@@ -392,7 +395,7 @@ class NiceChart(inkex.Effect):
 			for value in values:
 				
 				# Calculate the individual heights normalized on 100units
-				normedvalue=(100/valuesum)*int(value)
+				normedvalue=(bar_height/valuesum)*float(value)
 				
 				if(draw_blur):
 					# Create rectangle element
@@ -401,7 +404,7 @@ class NiceChart(inkex.Effect):
 					shadow.set('x', str(width / 2 + 1))
 					shadow.set('y', str(height / 2 - offset - (normedvalue)+1)) 
 					# Set rectangle properties
-					shadow.set("width", "10")
+					shadow.set("width",str(bar_width))
 					shadow.set("height", str((normedvalue)))
 					# Set shadow blur (connect to filter object in xml path)
 					shadow.set("style","filter:url(#filter)")
@@ -414,18 +417,18 @@ class NiceChart(inkex.Effect):
 				rect.set('y', str(height / 2 - offset - (normedvalue)))
 			   
 				# Set rectangle properties
-				rect.set("width", "10")
+				rect.set("width", str(bar_width))
 				rect.set("height", str((normedvalue)))
 				rect.set("style","fill:"+Colors[color%color_count])
 				
 				#If text is given, draw short paths and add the text
 				if(keys_present):
 					path=inkex.etree.Element(inkex.addNS("path","svg"))
-					path.set("d","m "+str(width/2)+","+str(height / 2 - offset - (normedvalue / 2))+" 15,0")
-					path.set("style","fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1")				
+					path.set("d","m "+str((width+bar_width)/2)+","+str(height / 2 - offset - (normedvalue / 2))+" "+str(bar_width/2+stacked_bar_text_offset)+",0")
+					path.set("style","fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1")
 					layer.append(path)
 					text = inkex.etree.Element(inkex.addNS('text','svg'))
-					text.set("x", str(width/2+16))
+					text.set("x", str(width/2+bar_width+stacked_bar_text_offset+1))
 					text.set("y", str(height / 2 - offset + 2 - (normedvalue / 2)))
 					text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream Charter")
 					text.text=keys[color]
