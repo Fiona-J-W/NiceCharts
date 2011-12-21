@@ -160,13 +160,10 @@ class NiceChart(inkex.Effect):
 			color=0
 			
 			# Normalize the bars to the largest value
-	#		for value in values:
-	#			if(float(value)>value_max):
-	#				value_max=float(value)
 			try:
 				value_max=max(values)
 			except ValueError:
-				value_max=0
+				value_max=0.0
 
 			for x in range(len(values)):
 				values[x]=(values[x]/value_max)*100
@@ -295,9 +292,6 @@ class NiceChart(inkex.Effect):
 			layer.append(background)
 			
 			#create value sum in order to divide the slices
-	#		valuesum=0
-	#		for value in values:
-	#			valuesum=valuesum+int(value)
 			try:
 				valuesum=sum(values)
 			except ValueError:
@@ -390,13 +384,10 @@ class NiceChart(inkex.Effect):
 			fe.set('stdDeviation', "1.1")
 			
 			#create value sum in order to divide the bars
-		#	valuesum=0.0
-		#	for value in values:
-		#		valuesum=valuesum+int(value)
 			try:
 				valuesum=sum(values)
 			except ValueError:
-				valuesum=0
+				valuesum=0.0
 			
 			# Init offset
 			offset=0
