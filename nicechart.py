@@ -119,14 +119,14 @@ class NiceChart(inkex.Effect):
 					continue
 				value=line.split(csv_delimiter)
 				keys.append(value[col_key])
-				values.append(value[col_val])
+				values.append(float(value[col_val]))
 			csv_file.close()
 		elif(input_type=="\"direct_input\""):
 			what=re.findall("([A-Z|a-z|0-9]+:[0-9]+)",what)
 			for value in what:
 				value=value.split(":")
 				keys.append(value[0])
-				values.append(value[1])
+				values.append(float(value[1]))
 		else:
 			err_log=open("/home/florian/err.log","a")
 			err_log.write("Error: input_type="+input_type+"\n")
@@ -160,12 +160,13 @@ class NiceChart(inkex.Effect):
 			color=0
 			
 			# Normalize the bars to the largest value
-			value_max=0
-			for value in values:
-				if(float(value)>value_max):
-					value_max=float(value)
+			try:
+				value_max=max(values)
+			except ValueError:
+				value_max=0.0
+
 			for x in range(len(values)):
-				values[x]=(float(values[x])/value_max)*100
+				values[x]=(values[x]/value_max)*100
 			
 			
 			# Set Default Colors
@@ -291,9 +292,10 @@ class NiceChart(inkex.Effect):
 			layer.append(background)
 			
 			#create value sum in order to divide the slices
-			valuesum=0
-			for value in values:
-				valuesum=valuesum+int(value)
+			try:
+				valuesum=sum(values)
+			except ValueError:
+				valuesum=0
 			
 			# Set an offsetangle
 			offset=0
@@ -382,9 +384,10 @@ class NiceChart(inkex.Effect):
 			fe.set('stdDeviation', "1.1")
 			
 			#create value sum in order to divide the bars
-			valuesum=0.0
-			for value in values:
-				valuesum=valuesum+int(value)
+			try:
+				valuesum=sum(values)
+			except ValueError:
+				valuesum=0.0
 			
 			# Init offset
 			offset=0
