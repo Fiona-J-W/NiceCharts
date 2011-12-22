@@ -51,7 +51,7 @@
 		</page>
 		<page name="chart_settings" _gui-text="Charts">
 			<param type="boolean" name="rotate" _gui-text="draw horizontally" >false</param>			
-			<param name="bar-height" type="int" _gui-text="bar-height:" min="0" max="100000" >100</param>
+			<param name="bar-height" type="int" _gui-text="bar-length:" min="0" max="100000" >100</param>
 			<param name="bar-width" type="int" _gui-text="bar-width:" min="0" max="100000" >10</param>
 			<param name="bar-offset" type="int" _gui-text="bar-offset:" min="0" max="100000" >5</param>
 			<param name="stacked-bar-text-offset" type="int" _gui-text="offset between stacked bar and description:" min="0" max="100000" >10</param>
