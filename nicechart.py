@@ -122,6 +122,10 @@ class NiceChart(inkex.Effect):
 			type="string", dest="font", default='sans-serif',
 			help="font of description")
 			
+	 	self.OptionParser.add_option("-S", "--font-size", action="store",
+			type="int", dest="font_size", default='10',
+			help="font size of description")
+			
 		#Dummy:
 		self.OptionParser.add_option("","--input_sections")
 	
@@ -195,6 +199,7 @@ class NiceChart(inkex.Effect):
 		
 		#get font
 		font=self.options.font
+		font_size=self.options.font_size
 		
 		#get rotation
 		rotate = self.options.rotate	

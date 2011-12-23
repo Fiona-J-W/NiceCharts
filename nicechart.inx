@@ -48,6 +48,7 @@
 		</page>
 		<page name="description_settings" _gui-text="Labels">
 			<param type="string" name="font" _gui-text="Font:">sans-serif</param>
+			<param type="int" name="font-size" _gui-text="Font Size:" min="0" max="10000" >10</param>
 		</page>
 		<page name="chart_settings" _gui-text="Charts">
 			<param type="boolean" name="rotate" _gui-text="draw horizontally" >false</param>			
