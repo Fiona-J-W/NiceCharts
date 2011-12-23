@@ -296,12 +296,12 @@ class NiceChart(inkex.Effect):
 					if(not rotate):
 						text.set("transform","matrix(0,-1,1,0,0,0)")
 						text.set("x", "-"+str(height/2+2))
-						text.set("y", str(width/2+offset+bar_width*0.75))
+						text.set("y", str(width/2+offset+bar_width/2+font_size/3))
 					else:
-						text.set("y", str(width/2+offset+bar_width*0.75))
+						text.set("y", str(width/2+offset+bar_width/2+font_size/3))
 						text.set("x", str(height/2-2))						
 					
-					text.set("style","font-size:"+str(bar_width)\
+					text.set("style","font-size:"+str(font_size)\
 					+"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"\
 					+font+";-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end")
 
@@ -494,8 +494,8 @@ class NiceChart(inkex.Effect):
 					layer.append(path)
 					text = inkex.etree.Element(inkex.addNS('text','svg'))
 					text.set("x", str(width/2+bar_width+stacked_bar_text_offset+1))
-					text.set("y", str(height / 2 - offset + 2 - (normedvalue / 2)))
-					text.set("style","font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream Charter")
+					text.set("y", str(height / 2 - offset + font_size/3 - (normedvalue / 2)))
+					text.set("style","font-size:"+str(font_size)+"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream Charter")
 					text.text=keys[color]
 					layer.append(text)
 				
