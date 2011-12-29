@@ -49,13 +49,15 @@
 		<page name="description_settings" _gui-text="Labels">
 			<param type="string" name="font" _gui-text="Font:">sans-serif</param>
 			<param type="int" name="font-size" _gui-text="Font Size:" min="0" max="10000" >10</param>
+			<param type="description" name="desc">Font-Color:</param>
+			<param type="string" name="font-color" _gui-text="Font Color:">#000000</param>
 		</page>
 		<page name="chart_settings" _gui-text="Charts">
-			<param type="boolean" name="rotate" _gui-text="draw horizontally" >false</param>			
+			<param type="boolean" name="rotate" _gui-text="draw horizontally" >false</param>
 			<param name="bar-height" type="int" _gui-text="bar-length:" min="0" max="100000" >100</param>
 			<param name="bar-width" type="int" _gui-text="bar-width:" min="0" max="100000" >10</param>
 			<param name="bar-offset" type="int" _gui-text="bar-offset:" min="0" max="100000" >5</param>
-			<param name="stacked-bar-text-offset" type="int" _gui-text="offset between stacked bar and description:" min="0" max="100000" >10</param>
+			<param name="text-offset" type="int" _gui-text="offset between bar and description:" min="0" max="100000" >5</param>
 			<param type="string" name="colors" _gui-text="color-scheme:">default</param>
 			<param type="boolean" name="blur" _gui-text="Draw Blur:" >false</param>
 		</page>

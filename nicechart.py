@@ -38,7 +38,7 @@ import inkex
 from simplestyle import *
 import math, re, nicechart_colors as nc_colors
 
-csv_file_name=""
+
 
 class NiceChart(inkex.Effect):
 	"""
@@ -114,9 +114,9 @@ class NiceChart(inkex.Effect):
 			type="int", dest="bar_offset", default='5',
 			help="distance between bars")
 			
-	 	self.OptionParser.add_option("-o", "--stacked-bar-text-offset", action="store",
-			type="int", dest="stacked_bar_text_offset", default='10',
-			help="distance between stacked bar and descriptions")
+	 	self.OptionParser.add_option("-o", "--text-offset", action="store",
+			type="int", dest="text_offset", default='5',
+			help="distance between bar and descriptions")
 			
 	 	self.OptionParser.add_option("-F", "--font", action="store",
 			type="string", dest="font", default='sans-serif',
@@ -125,7 +125,10 @@ class NiceChart(inkex.Effect):
 	 	self.OptionParser.add_option("-S", "--font-size", action="store",
 			type="int", dest="font_size", default='10',
 			help="font size of description")
-			
+		
+	 	self.OptionParser.add_option("-C", "--font-color", action="store",
+			type="string", dest="font_color", default='black',
+			help="font color of description")
 		#Dummy:
 		self.OptionParser.add_option("","--input_sections")
 	
@@ -151,12 +154,12 @@ class NiceChart(inkex.Effect):
 			csv_file=open(csv_file_name,"r")
 			for line in csv_file:
 				value=line.split(csv_delimiter)
-				if(len(value)>=2):
+				if(len(value)>=1): #make sure that there is at least one value (someone may want to use it as description)
 					keys.append(value[col_key])
 					values.append(float(value[col_val]))
 			csv_file.close()
 		elif(input_type=="\"direct_input\""):
-			what=re.findall("([A-Z|a-z|0-9]+:[0-9]+)",what)
+			what=re.findall("([A-Z|a-z|0-9]+:[0-9]+\.?[0-9]*)",what)
 			for value in what:
 				value=value.split(":")
 				keys.append(value[0])
@@ -174,7 +177,7 @@ class NiceChart(inkex.Effect):
 		
 		# Create a new layer.
 		layer = inkex.etree.SubElement(svg, 'g')
-		layer.set(inkex.addNS('label', 'inkscape'), 'Chart %s Layer' % (what))
+		layer.set(inkex.addNS('label', 'inkscape'), 'Chart-Layer: %s' % (what))
 		layer.set(inkex.addNS('groupmode', 'inkscape'), 'layer')
 		
 		# Check if Blur should be drawn:
@@ -187,6 +190,9 @@ class NiceChart(inkex.Effect):
 			Colors=nc_colors.get_color_scheme(Colors)
 		else:
 			Colors=re.findall("(#[0-9a-fA-F]{6})",Colors)
+			#to be sure we create a fallback:
+			if(len(Colors)==0):
+				Colors=nc_colors.get_color_scheme()
 		
 		color_count=len(Colors)
 		
@@ -195,11 +201,15 @@ class NiceChart(inkex.Effect):
 		bar_width=self.options.bar_width
 		bar_offset=self.options.bar_offset
 		#offset of the description in stacked-bar-charts:
-		stacked_bar_text_offset=self.options.stacked_bar_text_offset
+		#stacked_bar_text_offset=self.options.stacked_bar_text_offset
+		text_offset=self.options.text_offset
 		
 		#get font
 		font=self.options.font
 		font_size=self.options.font_size
+		font_color=self.options.font_color
+		
+		
 		
 		#get rotation
 		rotate = self.options.rotate	
@@ -293,17 +303,20 @@ class NiceChart(inkex.Effect):
 				# If keys are given create text elements
 				if(keys_present):
 					text = inkex.etree.Element(inkex.addNS('text','svg'))
-					if(not rotate):
+					if(not rotate): #=vertical
 						text.set("transform","matrix(0,-1,1,0,0,0)")
-						text.set("x", "-"+str(height/2+2))
+						#y after rotation:
+						text.set("x", "-"+str(height/2+text_offset)) 
+						#x after rotation:
 						text.set("y", str(width/2+offset+bar_width/2+font_size/3))
-					else:
+					else: #=horizontal
 						text.set("y", str(width/2+offset+bar_width/2+font_size/3))
-						text.set("x", str(height/2-2))						
+						text.set("x", str(height/2-text_offset))
 					
 					text.set("style","font-size:"+str(font_size)\
 					+"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"\
-					+font+";-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end")
+					+font+";-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end;fill:"\
+					+font_color)
 
 					text.text=keys[color]
 					
@@ -367,7 +380,7 @@ class NiceChart(inkex.Effect):
 			# Draw single slices with their shadow
 			for value in values:
 				# Calculate the PI-angles for start and end
-				angle=(2*3.141592)/valuesum*int(value)
+				angle=(2*3.141592)/valuesum*float(value)
 				
 				# Create the shadow first (if it should be created):
 				if(draw_blur):
@@ -489,11 +502,11 @@ class NiceChart(inkex.Effect):
 				#If text is given, draw short paths and add the text
 				if(keys_present):
 					path=inkex.etree.Element(inkex.addNS("path","svg"))
-					path.set("d","m "+str((width+bar_width)/2)+","+str(height / 2 - offset - (normedvalue / 2))+" "+str(bar_width/2+stacked_bar_text_offset)+",0")
+					path.set("d","m "+str((width+bar_width)/2)+","+str(height / 2 - offset - (normedvalue / 2))+" "+str(bar_width/2+text_offset)+",0")
 					path.set("style","fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1")
 					layer.append(path)
 					text = inkex.etree.Element(inkex.addNS('text','svg'))
-					text.set("x", str(width/2+bar_width+stacked_bar_text_offset+1))
+					text.set("x", str(width/2+bar_width+text_offset+1))
 					text.set("y", str(height / 2 - offset + font_size/3 - (normedvalue / 2)))
 					text.set("style","font-size:"+str(font_size)+"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream Charter")
 					text.text=keys[color]
