@@ -88,6 +88,9 @@ class NiceChart(inkex.Effect):
 			  type="string", dest="colors", default='default',
 			  help="color-scheme")
 		
+		self.OptionParser.add_option("", "--reverse_colors", action="store",
+			  type="inkbool", dest="reverse_colors", default='False',
+			  help="reverse color-scheme")
 		
 	 	self.OptionParser.add_option("-k", "--col_key", action="store",
 			  type="int", dest="col_key", default='0',
@@ -195,6 +198,9 @@ class NiceChart(inkex.Effect):
 				Colors=nc_colors.get_color_scheme()
 		
 		color_count=len(Colors)
+		
+		if(self.options.reverse_colors):
+			Colors.reverse()
 		
 		#Those values should be self-explaining:
 		bar_height=self.options.bar_height

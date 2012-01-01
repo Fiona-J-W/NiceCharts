@@ -15,13 +15,10 @@ table={
 }
 
 
-def get_color_scheme(name="default",reverse=False):
+def get_color_scheme(name="default"):
 	try:
 		returnval=table[name.lower()]
 	except:
 		returnval=default
-	
-	if(reverse):
-		returnval.reverse()
 	
 	return returnval
