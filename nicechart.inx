@@ -58,6 +58,7 @@
 			<param name="bar-width" type="int" _gui-text="bar-width:" min="0" max="100000" >10</param>
 			<param name="pie-radius" type="int" _gui-text="pie-radius:" min="0" max="100000" >100</param>
 			<param name="bar-offset" type="int" _gui-text="bar-offset:" min="0" max="100000" >5</param>
+			<param name="stroke-width" type="int" _gui-text="stroke-width:" min="0" max="100000" >2</param>
 			<param name="text-offset" type="int" _gui-text="offset between chart and description:" min="0" max="100000" >5</param>
 			<param type="string" name="colors" _gui-text="color-scheme:">default</param>
 			<param type="boolean" name="reverse_colors" _gui-text="reverse color-scheme" >false</param>

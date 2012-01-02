@@ -121,6 +121,9 @@ class NiceChart(inkex.Effect):
 			type="int", dest="bar_offset", default='5',
 			help="distance between bars")
 			
+	 	self.OptionParser.add_option("", "--stroke-width", action="store",
+			type="int", dest="stroke_width", default='2')
+			
 	 	self.OptionParser.add_option("-o", "--text-offset", action="store",
 			type="int", dest="text_offset", default='5',
 			help="distance between bar and descriptions")
@@ -225,6 +228,7 @@ class NiceChart(inkex.Effect):
 		rotate = self.options.rotate
 		
 		pie_radius=self.options.pie_radius
+		stroke_width=self.options.stroke_width
 
 		if(charttype=="bar"):
 		#########
@@ -421,7 +425,7 @@ class NiceChart(inkex.Effect):
 				if(keys_present):
 					path=inkex.etree.Element(inkex.addNS("path","svg"))
 					path.set("d","m "+str((width/2)+pie_radius*math.cos(angle/2+offset))+","+str((height/2)+pie_radius*math.sin(angle/2+offset))+" "+str((text_offset-2)*math.cos(angle/2+offset))+","+str((text_offset-2)*math.sin(angle/2+offset)))
-					path.set("style","fill:none;stroke:"+font_color+";stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1")
+					path.set("style","fill:none;stroke:"+font_color+";stroke-width:"+str(stroke_width)+"px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1")
 					layer.append(path)
 					text = inkex.etree.Element(inkex.addNS('text','svg'))
 					text.set("x", str((width/2)+(pie_radius+text_offset)*math.cos(angle/2+offset)))
@@ -516,7 +520,7 @@ class NiceChart(inkex.Effect):
 				if(keys_present):
 					path=inkex.etree.Element(inkex.addNS("path","svg"))
 					path.set("d","m "+str((width+bar_width)/2)+","+str(height / 2 - offset - (normedvalue / 2))+" "+str(bar_width/2+text_offset)+",0")
-					path.set("style","fill:none;stroke:"+font_color+";stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1")
+					path.set("style","fill:none;stroke:"+font_color+";stroke-width:"+str(stroke_width)+"px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1")
 					layer.append(path)
 					text = inkex.etree.Element(inkex.addNS('text','svg'))
 					text.set("x", str(width/2+bar_width+text_offset+1))
