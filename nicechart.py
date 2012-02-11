@@ -283,10 +283,10 @@ class NiceChart(inkex.Effect):
 					# Set shadow properties
 					if(not rotate):
 						shadow.set("width", str(bar_width))
-						shadow.set("height", str(int(value)*1))
+						shadow.set("height", str(int(value)))
 					else:
 						shadow.set("height", str(bar_width))
-						shadow.set("width", str(int(value)*1))
+						shadow.set("width", str(int(value)))
 					# Set shadow blur (connect to filter object in xml path)
 					shadow.set("style","filter:url(#filter)")
 				
@@ -304,10 +304,10 @@ class NiceChart(inkex.Effect):
 				# Set rectangle properties
 				if(not rotate):
 					rect.set("width", str(bar_width))
-					rect.set("height", str(int(value)*1))
+					rect.set("height", str(int(value)))
 				else:
 					rect.set("height", str(bar_width))
-					rect.set("width", str(int(value)*1))
+					rect.set("width", str(int(value)))
 					
 				rect.set("style","fill:"+Colors[color%color_count])
 				
@@ -540,12 +540,12 @@ class NiceChart(inkex.Effect):
 						path=inkex.etree.Element(inkex.addNS("path","svg"))
 						path.set("d","m "+str((width)/2+offset+normedvalue/2)+","
 							+str(height / 2 + bar_width/2)
-							+" 0,"+str(bar_width/2+(font_size*i*1.0)+text_offset)) #line
+							+" 0,"+str(bar_width/2+(font_size*i)+text_offset)) #line
 						path.set("style","fill:none;stroke:"+font_color+";stroke-width:"+str(stroke_width)+"px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1")
 						layer.append(path)
 						text = inkex.etree.Element(inkex.addNS('text','svg'))
 						text.set("x", str((width)/2+offset+normedvalue/2-font_size/3))
-						text.set("y", str((height/2)+bar_width+(font_size*(i+1)*1.0)+text_offset ))
+						text.set("y", str((height/2)+bar_width+(font_size*(i+1))+text_offset ))
 						text.set("style","font-size:"+str(font_size)+"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream Charter;fill:"+font_color)
 						text.text=keys[color]
 						layer.append(text)
