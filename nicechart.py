@@ -141,6 +141,11 @@ class NiceChart(inkex.Effect):
 			help="font color of description")
 		#Dummy:
 		self.OptionParser.add_option("","--input_sections")
+
+	 	self.OptionParser.add_option("-V", "--show_values", action="store",
+			type="inkbool", dest="show_values", default='False',
+			help="Show values in chart")
+
 	
 	
 	def effect(self):
@@ -152,6 +157,7 @@ class NiceChart(inkex.Effect):
 		what = self.options.what
 		keys=[]
 		values=[]
+		orig_values=[]
 		keys_present=True
 		cnt=0
 		csv_file_name=self.options.filename
@@ -159,6 +165,7 @@ class NiceChart(inkex.Effect):
 		input_type=self.options.input_type
 		col_key=self.options.col_key
 		col_val=self.options.col_val
+		show_values=self.options.show_values
 		
 		if(input_type=="\"file\""):
 			csv_file=open(csv_file_name,"r")
@@ -246,6 +253,7 @@ class NiceChart(inkex.Effect):
 				value_max=0.0
 
 			for x in range(len(values)):
+				orig_values.append(values[x])
 				values[x]=(values[x]/value_max)*bar_height
 			
 			# Get defs of Document
@@ -335,10 +343,10 @@ class NiceChart(inkex.Effect):
 					+font_color)
 
 					text.text=keys[cnt]
-					cnt=cnt+1
+					#cnt=cnt+1
 
 				# Increase Offset and Color
-				offset=offset+bar_width+bar_offset
+				#offset=offset+bar_width+bar_offset
 				color=(color+1)%8
 				# Connect elements together.
 				if(draw_blur):
@@ -346,6 +354,32 @@ class NiceChart(inkex.Effect):
 				layer.append(rect)
 				if(keys_present):
 					layer.append(text)
+					
+				if(show_values):
+				    vtext = inkex.etree.Element(inkex.addNS('text','svg'))
+				    if(not rotate): #=vertical
+					    vtext.set("transform","matrix(0,-1,1,0,0,0)")
+					    #y after rotation:
+					    vtext.set("x", "-"+str(height/2+text_offset-value-text_offset-text_offset)) 
+					    #x after rotation:
+					    vtext.set("y", str(width/2+offset+bar_width/2+font_size/3))
+				    else: #=horizontal
+					    vtext.set("y", str(width/2+offset+bar_width/2+font_size/3))
+					    vtext.set("x", str(height/2-text_offset+value+text_offset+text_offset))
+
+				    vtext.set("style","font-size:"+str(font_size)\
+				    +"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"\
+				    +font+";-inkscape-font-specification:Bitstream   Charter;text-align:start;text-anchor:start;fill:"\
+				    +font_color)
+
+				    vtext.text=str(int(orig_values[cnt]))
+				    layer.append(vtext)
+				
+				cnt=cnt+1
+				offset=offset+bar_width+bar_offset
+				
+
+				
 		elif(charttype=="pie"):
 		#########
 		###PIE###

@@ -64,6 +64,15 @@
 			<param type="boolean" name="reverse_colors" _gui-text="reverse color-scheme" >false</param>
 			<param type="boolean" name="blur" _gui-text="Draw Blur:" >false</param>
 		</page>
+		<page name="value_settings" _gui-text="Values">
+			<param type="boolean" name="show_values" _gui-text="show values" >false</param>
+<!--			<param type="string" name="font" _gui-text="Font:">sans-serif</param>
+			<param type="int" name="font-size" _gui-text="Font Size:" min="0" max="10000" >10</param>
+			<param type="description" name="desc">Font-Color:</param>
+			<param type="string" name="font-color" _gui-text="Font Color:">#000000</param>
+-->
+			
+		</page>
 	</param>
 	<param name="type" type="enum" _gui-text="Chart Type:">
 		<item value="bar">Bar Chart</item>
