@@ -36,8 +36,8 @@
 					<param name="desc" type="description">Enter the name of a CSV-file:</param>
 					<param name="filename" type="string" _gui-text="File:" ></param>
 					<param name="delimiter" type="string" _gui-text="Delimiter:" >;</param>
-					<param name="col_key" type="int" _gui-text="Coloumn that contians the keys:" min="0" max="10000" >0</param>
-					<param name="col_val" type="int" _gui-text="Coloumn that contians the values:" min="0" max="10000" >1</param>
+					<param name="col_key" type="int" _gui-text="Coloumn that contains the keys:" min="0" max="10000" >0</param>
+					<param name="col_val" type="int" _gui-text="Coloumn that contains the values:" min="0" max="10000" >1</param>
 				</page>
 				<page name="direct_input" _gui-text="direct input">
 					<param name="desc" type="description">Type in comma seperated values:</param>
@@ -60,7 +60,17 @@
 			<param name="bar-offset" type="int" _gui-text="bar-offset:" min="0" max="100000" >5</param>
 			<param name="stroke-width" type="int" _gui-text="stroke-width:" min="0" max="100000" >2</param>
 			<param name="text-offset" type="int" _gui-text="offset between chart and description:" min="0" max="100000" >5</param>
-			<param type="string" name="colors" _gui-text="color-scheme:">default</param>
+			
+			<param name="colors" type="enum" _gui-text="color-scheme:">
+				<item value="default">Default</item>
+				<item value="blue">Blue</item>
+				<item value="gray">Gray</item>
+				<item value="contrast">Contrast</item>
+				
+			</param>
+
+			
+			
 			<param type="boolean" name="reverse_colors" _gui-text="reverse color-scheme" >false</param>
 			<param type="boolean" name="blur" _gui-text="Draw Blur:" >false</param>
 		</page>
