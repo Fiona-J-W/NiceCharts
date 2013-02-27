@@ -29,8 +29,8 @@
 
 # These two lines are only needed if you don't put the script directly into
 # the installation directory
-#import sys
-#sys.path.append('/usr/share/inkscape/extensions')
+import sys
+sys.path.append('/usr/share/inkscape/extensions')
 
 # We will use the inkex module with the predefined Effect base class.
 import inkex
@@ -159,6 +159,7 @@ class NiceChart(inkex.Effect):
 		values=[]
 		orig_values=[]
 		keys_present=True
+		pie_abs=False
 		cnt=0
 		csv_file_name=self.options.filename
 		csv_delimiter=self.options.csv_delimiter
@@ -184,7 +185,11 @@ class NiceChart(inkex.Effect):
 
 		# Get script's "--type" option value.
 		charttype=self.options.type
-		
+
+		if(charttype=="pie_abs"):
+			pie_abs=True
+			charttype="pie"
+
 		# Get access to main SVG document element and get its dimensions.
 		svg = self.document.getroot()
 		
@@ -411,15 +416,26 @@ class NiceChart(inkex.Effect):
 			background.set("cx", str(width/2))
 			background.set("cy", str(height/2))
 			background.set("r", str(pie_radius))
-			background.set("style","fill:#aaaaaa;stroke:none")
+			
+			if pie_abs:
+				background.set("style","stroke:#ececec;fill:#f9f9f9")
+			
+			else:
+				background.set("style","fill:#aaaaaa;stroke:none")
+
 			layer.append(background)
 			
 			#create value sum in order to divide the slices
 			try:
 				valuesum=sum(values)
+				
 			except ValueError:
 				valuesum=0
-			
+
+				
+			if pie_abs:
+				valuesum=100
+
 			# Set an offsetangle
 			offset=0
 			
@@ -467,6 +483,14 @@ class NiceChart(inkex.Effect):
 					else:
 						text.set("style",textstyle+";text-align:end;text-anchor:end")
 					text.text=keys[cnt]
+					if show_values:
+						text.text=text.text+"("+str(values[cnt])
+
+						if pie_abs:
+							text.text=text.text+" %"
+						
+						text.text=text.text+")"
+					
 					cnt=cnt+1
 					layer.append(text)
 				

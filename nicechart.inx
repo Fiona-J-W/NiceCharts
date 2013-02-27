@@ -87,6 +87,8 @@
 	<param name="type" type="enum" _gui-text="Chart Type:">
 		<item value="bar">Bar Chart</item>
 		<item value="pie">Pie Chart</item>
+		<item value="pie_abs">Pie Chart (percentage)</item>
+
 		<item value="stbar">Stacked Bar Chart</item>
 	</param>
 	<effect>
