@@ -432,7 +432,8 @@ class NiceChart(inkex.Effect):
 						text.set("style",textstyle)
 					else:
 						text.set("style",textstyle+";text-align:end;text-anchor:end")
-					text.text=keys[color]
+					text.text=keys[cnt]
+					cnt=cnt+1
 					layer.append(text)
 				
 				#increase the rotation-offset and the colorcycle-position
@@ -534,7 +535,8 @@ class NiceChart(inkex.Effect):
 						text.set("x", str(width/2+bar_width+text_offset+1))
 						text.set("y", str(height / 2 - offset + font_size/3 - (normedvalue / 2)))
 						text.set("style","font-size:"+str(font_size)+"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream Charter;fill:"+font_color)
-						text.text=keys[color]
+						text.text=keys[cnt]
+						cnt=cnt+1
 						layer.append(text)
 					else:
 						path=inkex.etree.Element(inkex.addNS("path","svg"))
