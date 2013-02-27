@@ -153,7 +153,7 @@ class NiceChart(inkex.Effect):
 		keys=[]
 		values=[]
 		keys_present=True
-		
+		cnt=0
 		csv_file_name=self.options.filename
 		csv_delimiter=self.options.csv_delimiter
 		input_type=self.options.input_type
@@ -334,8 +334,8 @@ class NiceChart(inkex.Effect):
 					+font+";-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end;fill:"\
 					+font_color)
 
-					text.text=keys[color]
-					
+					text.text=keys[cnt]
+					cnt=cnt+1
 
 				# Increase Offset and Color
 				offset=offset+bar_width+bar_offset
