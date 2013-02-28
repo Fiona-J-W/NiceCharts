@@ -66,6 +66,7 @@
 				<item value="blue">Blue</item>
 				<item value="gray">Gray</item>
 				<item value="contrast">Contrast</item>
+				<item value="sap">SAP</item>
 				
 			</param>
 
