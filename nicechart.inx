@@ -61,6 +61,7 @@
 			<param name="stroke-width" type="int" _gui-text="stroke-width:" min="0" max="100000" >2</param>
 			<param name="text-offset" type="int" _gui-text="offset between chart and description:" min="0" max="100000" >5</param>
 			
+			
 			<param name="colors" type="enum" _gui-text="color-scheme:">
 				<item value="default">Default</item>
 				<item value="blue">Blue</item>
@@ -69,8 +70,8 @@
 				<item value="sap">SAP</item>
 				
 			</param>
-
 			
+			<param type="string" name="colors_override" _gui-text="manual colors:"></param> 			
 			
 			<param type="boolean" name="reverse_colors" _gui-text="reverse color-scheme" >false</param>
 			<param type="boolean" name="blur" _gui-text="Draw Blur:" >false</param>

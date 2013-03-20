@@ -30,7 +30,7 @@
 # These two lines are only needed if you don't put the script directly into
 # the installation directory
 import sys
-sys.path.append('/usr/share/inkscape/extensions')
+#sys.path.append('/usr/share/inkscape/extensions')
 
 # We will use the inkex module with the predefined Effect base class.
 import inkex
@@ -87,7 +87,13 @@ class NiceChart(inkex.Effect):
 	 	self.OptionParser.add_option("-c", "--colors", action="store",
 			  type="string", dest="colors", default='default',
 			  help="color-scheme")
+
+		# Define string option "--colors_override"
+	 	self.OptionParser.add_option("", "--colors_override", action="store",
+			  type="string", dest="colors_override", default='',
+			  help="color-scheme-override")
 		
+
 		self.OptionParser.add_option("", "--reverse_colors", action="store",
 			  type="inkbool", dest="reverse_colors", default='False',
 			  help="reverse color-scheme")
@@ -207,7 +213,12 @@ class NiceChart(inkex.Effect):
 		#draw_blur=False
 		
 		# Set Default Colors
-		Colors=self.options.colors
+		self.options.colors_override.strip()
+		if (len(self.options.colors_override)>0):
+			Colors=self.options.colors_override
+		else:
+			Colors=self.options.colors
+
 		if(Colors[0].isalpha()):
 			Colors=nc_colors.get_color_scheme(Colors)
 		else:
@@ -217,6 +228,7 @@ class NiceChart(inkex.Effect):
 				Colors=nc_colors.get_color_scheme()
 		
 		color_count=len(Colors)
+		
 		
 		if(self.options.reverse_colors):
 			Colors.reverse()
