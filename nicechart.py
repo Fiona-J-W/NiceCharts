@@ -200,8 +200,8 @@ class NiceChart(inkex.Effect):
 		svg = self.document.getroot()
 		
 		# Get the page attibutes:
-		width  = self.unittouu(svg.get('width'))
-		height = self.unittouu(svg.attrib['height'])
+		width  = self.getUnittouu(svg.get('width'))
+		height = self.getUnittouu(svg.attrib['height'])
 		
 		# Create a new layer.
 		layer = inkex.etree.SubElement(svg, 'g')
@@ -632,7 +632,13 @@ class NiceChart(inkex.Effect):
 				layer.append(rect)
 				
 				i-=1 #loopcounter
-
+	
+	def getUnittouu(self, param):
+	#compatibility wrapper
+	    try:
+	        return inkex.unittouu(param)
+	    except AttributeError:
+	        return self.unittouu(param)
 
 # Create effect instance and apply it.
 effect = NiceChart()
