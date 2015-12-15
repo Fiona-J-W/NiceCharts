@@ -29,7 +29,7 @@
 
 # These two lines are only needed if you don't put the script directly into
 # the installation directory
-#import sys
+import sys
 #sys.path.append('/usr/share/inkscape/extensions')
 
 # We will use the inkex module with the predefined Effect base class.
@@ -87,7 +87,13 @@ class NiceChart(inkex.Effect):
 	 	self.OptionParser.add_option("-c", "--colors", action="store",
 			  type="string", dest="colors", default='default',
 			  help="color-scheme")
+
+		# Define string option "--colors_override"
+	 	self.OptionParser.add_option("", "--colors_override", action="store",
+			  type="string", dest="colors_override", default='',
+			  help="color-scheme-override")
 		
+
 		self.OptionParser.add_option("", "--reverse_colors", action="store",
 			  type="inkbool", dest="reverse_colors", default='False',
 			  help="reverse color-scheme")
@@ -141,6 +147,11 @@ class NiceChart(inkex.Effect):
 			help="font color of description")
 		#Dummy:
 		self.OptionParser.add_option("","--input_sections")
+
+	 	self.OptionParser.add_option("-V", "--show_values", action="store",
+			type="inkbool", dest="show_values", default='False',
+			help="Show values in chart")
+
 	
 	
 	def effect(self):
@@ -152,13 +163,16 @@ class NiceChart(inkex.Effect):
 		what = self.options.what
 		keys=[]
 		values=[]
+		orig_values=[]
 		keys_present=True
-		
+		pie_abs=False
+		cnt=0
 		csv_file_name=self.options.filename
 		csv_delimiter=self.options.csv_delimiter
 		input_type=self.options.input_type
 		col_key=self.options.col_key
 		col_val=self.options.col_val
+		show_values=self.options.show_values
 		
 		if(input_type=="\"file\""):
 			csv_file=open(csv_file_name,"r")
@@ -177,7 +191,11 @@ class NiceChart(inkex.Effect):
 
 		# Get script's "--type" option value.
 		charttype=self.options.type
-		
+
+		if(charttype=="pie_abs"):
+			pie_abs=True
+			charttype="pie"
+
 		# Get access to main SVG document element and get its dimensions.
 		svg = self.document.getroot()
 		
@@ -195,7 +213,12 @@ class NiceChart(inkex.Effect):
 		#draw_blur=False
 		
 		# Set Default Colors
-		Colors=self.options.colors
+		self.options.colors_override.strip()
+		if (len(self.options.colors_override)>0):
+			Colors=self.options.colors_override
+		else:
+			Colors=self.options.colors
+
 		if(Colors[0].isalpha()):
 			Colors=nc_colors.get_color_scheme(Colors)
 		else:
@@ -205,6 +228,7 @@ class NiceChart(inkex.Effect):
 				Colors=nc_colors.get_color_scheme()
 		
 		color_count=len(Colors)
+		
 		
 		if(self.options.reverse_colors):
 			Colors.reverse()
@@ -246,6 +270,7 @@ class NiceChart(inkex.Effect):
 				value_max=0.0
 
 			for x in range(len(values)):
+				orig_values.append(values[x])
 				values[x]=(values[x]/value_max)*bar_height
 			
 			# Get defs of Document
@@ -334,11 +359,11 @@ class NiceChart(inkex.Effect):
 					+font+";-inkscape-font-specification:Bitstream   Charter;text-align:end;text-anchor:end;fill:"\
 					+font_color)
 
-					text.text=keys[color]
-					
+					text.text=keys[cnt]
+					#cnt=cnt+1
 
 				# Increase Offset and Color
-				offset=offset+bar_width+bar_offset
+				#offset=offset+bar_width+bar_offset
 				color=(color+1)%8
 				# Connect elements together.
 				if(draw_blur):
@@ -346,6 +371,32 @@ class NiceChart(inkex.Effect):
 				layer.append(rect)
 				if(keys_present):
 					layer.append(text)
+					
+				if(show_values):
+				    vtext = inkex.etree.Element(inkex.addNS('text','svg'))
+				    if(not rotate): #=vertical
+					    vtext.set("transform","matrix(0,-1,1,0,0,0)")
+					    #y after rotation:
+					    vtext.set("x", "-"+str(height/2+text_offset-value-text_offset-text_offset)) 
+					    #x after rotation:
+					    vtext.set("y", str(width/2+offset+bar_width/2+font_size/3))
+				    else: #=horizontal
+					    vtext.set("y", str(width/2+offset+bar_width/2+font_size/3))
+					    vtext.set("x", str(height/2-text_offset+value+text_offset+text_offset))
+
+				    vtext.set("style","font-size:"+str(font_size)\
+				    +"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"\
+				    +font+";-inkscape-font-specification:Bitstream   Charter;text-align:start;text-anchor:start;fill:"\
+				    +font_color)
+
+				    vtext.text=str(int(orig_values[cnt]))
+				    layer.append(vtext)
+				
+				cnt=cnt+1
+				offset=offset+bar_width+bar_offset
+				
+
+				
 		elif(charttype=="pie"):
 		#########
 		###PIE###
@@ -377,15 +428,26 @@ class NiceChart(inkex.Effect):
 			background.set("cx", str(width/2))
 			background.set("cy", str(height/2))
 			background.set("r", str(pie_radius))
-			background.set("style","fill:#aaaaaa;stroke:none")
+			
+			if pie_abs:
+				background.set("style","stroke:#ececec;fill:#f9f9f9")
+			
+			else:
+				background.set("style","fill:#aaaaaa;stroke:none")
+
 			layer.append(background)
 			
 			#create value sum in order to divide the slices
 			try:
 				valuesum=sum(values)
+				
 			except ValueError:
 				valuesum=0
-			
+
+				
+			if pie_abs:
+				valuesum=100
+
 			# Set an offsetangle
 			offset=0
 			
@@ -432,7 +494,16 @@ class NiceChart(inkex.Effect):
 						text.set("style",textstyle)
 					else:
 						text.set("style",textstyle+";text-align:end;text-anchor:end")
-					text.text=keys[color]
+					text.text=keys[cnt]
+					if show_values:
+						text.text=text.text+"("+str(values[cnt])
+
+						if pie_abs:
+							text.text=text.text+" %"
+						
+						text.text=text.text+")"
+					
+					cnt=cnt+1
 					layer.append(text)
 				
 				#increase the rotation-offset and the colorcycle-position
@@ -534,7 +605,8 @@ class NiceChart(inkex.Effect):
 						text.set("x", str(width/2+bar_width+text_offset+1))
 						text.set("y", str(height / 2 - offset + font_size/3 - (normedvalue / 2)))
 						text.set("style","font-size:"+str(font_size)+"px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:"+font+";-inkscape-font-specification:Bitstream Charter;fill:"+font_color)
-						text.text=keys[color]
+						text.text=keys[cnt]
+						cnt=cnt+1
 						layer.append(text)
 					else:
 						path=inkex.etree.Element(inkex.addNS("path","svg"))
