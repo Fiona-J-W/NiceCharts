@@ -182,8 +182,8 @@ class NiceChart(inkex.Effect):
 		svg = self.document.getroot()
 		
 		# Get the page attibutes:
-		width  = inkex.unittouu(svg.get('width'))
-		height = inkex.unittouu(svg.attrib['height'])
+		width  = self.unittouu(svg.get('width'))
+		height = self.unittouu(svg.attrib['height'])
 		
 		# Create a new layer.
 		layer = inkex.etree.SubElement(svg, 'g')
