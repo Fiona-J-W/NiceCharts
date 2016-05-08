@@ -2,3 +2,5 @@ A Small inkscape extension to draw charts in inkscape by Christoph Sterz and Flo
 
 For installation simply copy the 3 files into your Inkscape extension folder
 eg. in /usr/share/inkscape/extensions/
+
+After installing, you may find it in Inkscape menu Extensions > Render > NiceCharts. 
