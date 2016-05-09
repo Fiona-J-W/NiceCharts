@@ -1,5 +1,9 @@
 A Small inkscape extension to draw charts in inkscape by Christoph Sterz and Florian Weber.
 
+The next version of inkscape will contain NiceCharts by default and the further development
+has also been passed on to the inkscape-project. This means that it will likely be a good idea to
+contact the inkscape-team, for instance via @Moini who initiated that inclusion.
+
 For installation simply copy the 3 files into your Inkscape extension folder
 eg. in /usr/share/inkscape/extensions/
 
